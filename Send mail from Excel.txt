@@ -1,0 +1,119 @@
+Sub Mail_WC_DAILY_Outlook()
+
+
+    Range("AG2:AR99").Select
+    Selection.Copy
+    Selection.PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks _
+        :=False, Transpose:=False
+    
+    Dim rng As Range
+    Dim OutApp As Object
+    Dim OutMail As Object
+
+    Set rng = Nothing
+    Set rng = Selection.SpecialCells(xlCellTypeVisible)
+    Set OutApp = CreateObject("Outlook.Application")
+    Set OutMail = OutApp.CreateItem(0)
+
+    strbody_html = "<BODY style=font-size:11pt;font-family:Calibri>Dear all, <p>Please find below and attached the LITASCO GROUP WC Daily report.<p> </BODY>"
+
+
+    On Error Resume Next
+    
+    
+    
+    On Error GoTo 0
+    
+    If rng Is Nothing Then
+        MsgBox "The selection is not a range or the sheet is protected" & _
+               vbNewLine & "please correct and try again.", vbOKOnly
+        Exit Sub
+    End If
+    
+    With Application
+        .EnableEvents = False
+        .ScreenUpdating = False
+    End With
+    
+    Set OutApp = CreateObject("Outlook.Application")
+    Set OutMail = OutApp.CreateItem(0)
+    
+    On Error Resume Next
+    With OutMail
+        .to = "dpereiradapaz@litasco.ch"
+        .CC = ""
+        .BCC = ""
+        .Subject = "WC Daily"
+        .Body = strbody
+        .HTMLBody = strbody_html & RangetoHTML(rng)
+        .Attachments.Add ActiveWorkbook.FullName
+        'You can add other files also like this
+        '.Attachments.Add ("C:\test.txt")
+        .Send   'or use .Display
+    End With
+    On Error GoTo 0
+    
+    With Application
+        .EnableEvents = True
+        .ScreenUpdating = True
+    End With
+
+    Set OutMail = Nothing
+    Set OutApp = Nothing
+    
+    MsgBox ("Message sent. Do not save the file!")
+    
+End Sub
+
+Function RangetoHTML(rng As Range)
+
+    Dim fso As Object
+    Dim ts As Object
+    Dim TempFile As String
+    Dim TempWB As Workbook
+
+    TempFile = Environ$("temp") & "\" & Format(Now, "dd-mm-yy h-mm-ss") & ".htm"
+
+    'Copy the range and create a new workbook to past the data in
+    rng.Copy
+    Set TempWB = Workbooks.Add(1)
+    With TempWB.Sheets(1)
+        .Cells(1).PasteSpecial Paste:=8
+        .Cells(1).PasteSpecial xlPasteValues, , False, False
+        .Cells(1).PasteSpecial xlPasteAllUsingSourceTheme, , False, False
+        .Cells(1).Select
+        Application.CutCopyMode = False
+        On Error Resume Next
+        .DrawingObjects.Visible = True
+        .DrawingObjects.Delete
+        On Error GoTo 0
+    End With
+
+    'Publish the sheet to a htm file
+    With TempWB.PublishObjects.Add( _
+         SourceType:=xlSourceRange, _
+         Filename:=TempFile, _
+         Sheet:=TempWB.Sheets(1).Name, _
+         Source:=TempWB.Sheets(1).UsedRange.Address, _
+         HtmlType:=xlHtmlStatic)
+        .Publish (True)
+    End With
+
+    'Read all data from the htm file into RangetoHTML
+    Set fso = CreateObject("Scripting.FileSystemObject")
+    Set ts = fso.GetFile(TempFile).OpenAsTextStream(1, -2)
+    RangetoHTML = ts.readall
+    ts.Close
+    RangetoHTML = Replace(RangetoHTML, "align=center x:publishsource=", _
+                          "align=left x:publishsource=")
+
+    'Close TempWB
+    TempWB.Close savechanges:=False
+
+    'Delete the htm file we used in this function
+    Kill TempFile
+
+    Set ts = Nothing
+    Set fso = Nothing
+    Set TempWB = Nothing
+End Function

@@ -1,0 +1,326 @@
+
+Sub Crude()
+'
+' CRUDE DATA PREPARATION
+
+
+' from All tab to DATA tab and CRUDE tab
+
+    'adding a row where we will include the filter
+    Sheets("All").Select
+    Range("C1").EntireRow.Insert
+    
+    'Find the LastRow
+    Dim LastLine As Long
+    LastLine = Columns(1).Find("*", , , , xlByColumns, xlPrevious).Row
+    
+    'Add filter or filters
+    Range("A:XFD").AutoFilter Field:=3, Criteria1:="CRUDE"
+    Range("A:XFD").AutoFilter Field:=4, Criteria1:="<>LPA NARL REFINING"
+    
+    'Copy the filtered data and Paste to DATA
+    Range("H3:XFD" & LastLine).SpecialCells(xlCellTypeVisible).Copy
+    Sheets("DATA").Range("A2").PasteSpecial
+    
+    'Copy company code and Paste to CRUDE
+    Sheets("All").Select
+    Range("B3:B" & LastLine).SpecialCells(xlCellTypeVisible).Copy
+    Sheets("CRUDE").Range("A1").PasteSpecial
+    
+    'Copy Manual entry and Paste to CRUDE
+    Sheets("All").Select
+    Range("A3:A" & LastLine).SpecialCells(xlCellTypeVisible).Copy
+    Sheets("CRUDE").Range("C1").PasteSpecial Paste:=xlPasteValues
+       
+    
+    'Delete the first row as well as the filter
+    Sheets("All").Select
+    Range("A1").EntireRow.Delete
+
+
+
+' from DATA tab to CRUDE tab
+
+Sheets("DATA").Select
+
+Dim lastColumn As Long
+lastColumn = Sheets("DATA").Cells(2, Columns.Count).End(xlToLeft).Column
+
+
+
+Dim a As Long
+Dim b As Long
+    a = 0
+    b = lastColumn - 1
+        
+    Range("A2").Select
+    Range(Selection, Selection.End(xlDown)).Select
+    Selection.Copy
+    Sheets("CRUDE").Select
+    Range("D1").Select
+    Selection.PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks _
+        :=False, Transpose:=False
+    Selection.End(xlDown).Select
+    ActiveCell.Offset(1, 0).Select
+
+
+Do Until a = b
+    a = a + 1
+    Sheets("DATA").Select
+    ActiveCell.Offset(0, 1).Select
+    Range(Selection, Selection.End(xlDown)).Select
+    Selection.Copy
+    Sheets("CRUDE").Select
+    Selection.PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks _
+        :=False, Transpose:=False
+    Selection.End(xlDown).Select
+    ActiveCell.Offset(1, 0).Select
+      
+Loop
+
+End Sub
+
+
+Sub Heavy()
+'
+' HEAVY DATA PREPARATION
+
+
+' from All tab to DATA tab and HEAVY tab
+
+    'adding a row where we will include the filter
+    Sheets("All").Select
+    Range("C1").EntireRow.Insert
+    
+    'Find the LastRow
+    Dim LastLine As Long
+    LastLine = Columns(1).Find("*", , , , xlByColumns, xlPrevious).Row
+    
+    'Add filter or filters
+    Range("A:XFD").AutoFilter Field:=3, Criteria1:="HEAVY"
+    'Range("A:XFD").AutoFilter Field:=4, Criteria1:="<>LPA NARL REFINING"
+    
+    'Copy the filtered data and Paste to DATA
+    Range("H3:XFD" & LastLine).SpecialCells(xlCellTypeVisible).Copy
+    Sheets("DATA").Range("A2").PasteSpecial
+    
+    'Copy company code and Paste to HEAVY
+    Sheets("All").Select
+    Range("B3:B" & LastLine).SpecialCells(xlCellTypeVisible).Copy
+    Sheets("HEAVY").Range("A1").PasteSpecial
+    
+    'Copy Manual entry and Paste to HEAVY
+    Sheets("All").Select
+    Range("A3:A" & LastLine).SpecialCells(xlCellTypeVisible).Copy
+    Sheets("HEAVY").Range("C1").PasteSpecial Paste:=xlPasteValues
+       
+    
+    'Delete the first row as well as the filter
+    Sheets("All").Select
+    Range("A1").EntireRow.Delete
+
+
+
+' from DATA tab to HEAVY tab
+
+Sheets("DATA").Select
+
+Dim lastColumn As Long
+lastColumn = Sheets("DATA").Cells(2, Columns.Count).End(xlToLeft).Column
+
+
+
+Dim a As Long
+Dim b As Long
+    a = 0
+    b = lastColumn - 1
+        
+    Range("A2").Select
+    Range(Selection, Selection.End(xlDown)).Select
+    Selection.Copy
+    Sheets("HEAVY").Select
+    Range("D1").Select
+    Selection.PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks _
+        :=False, Transpose:=False
+    Selection.End(xlDown).Select
+    ActiveCell.Offset(1, 0).Select
+
+
+Do Until a = b
+    a = a + 1
+    Sheets("DATA").Select
+    ActiveCell.Offset(0, 1).Select
+    Range(Selection, Selection.End(xlDown)).Select
+    Selection.Copy
+    Sheets("HEAVY").Select
+    Selection.PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks _
+        :=False, Transpose:=False
+    Selection.End(xlDown).Select
+    ActiveCell.Offset(1, 0).Select
+       
+Loop
+
+End Sub
+
+
+Sub Gasoline()
+'
+' GASOLINE DATA PREPARATION
+
+
+' from All tab to DATA tab and GASOLINE tab
+
+    'adding a row where we will include the filter
+    Sheets("All").Select
+    Range("C1").EntireRow.Insert
+    
+    'Find the LastRow
+    Dim LastLine As Long
+    LastLine = Columns(1).Find("*", , , , xlByColumns, xlPrevious).Row
+    
+    'Add filter or filters
+    Range("A:XFD").AutoFilter Field:=3, Criteria1:="GASOLINE"
+    Range("A:XFD").AutoFilter Field:=4, Criteria1:="<>GVA MRS JV"
+    
+    'Copy the filtered data and Paste to DATA
+    Range("H3:XFD" & LastLine).SpecialCells(xlCellTypeVisible).Copy
+    Sheets("DATA").Range("A2").PasteSpecial
+    
+    'Copy company code and Paste to GASOLINE
+    Sheets("All").Select
+    Range("B3:B" & LastLine).SpecialCells(xlCellTypeVisible).Copy
+    Sheets("GASOLINE").Range("A1").PasteSpecial
+    
+    'Copy Manual entry and Paste to GASOLINE
+    Sheets("All").Select
+    Range("A3:A" & LastLine).SpecialCells(xlCellTypeVisible).Copy
+    Sheets("GASOLINE").Range("C1").PasteSpecial Paste:=xlPasteValues
+       
+    
+    'Delete the first row as well as the filter
+    Sheets("All").Select
+    Range("A1").EntireRow.Delete
+
+
+
+' from DATA tab to GASOLINE tab
+
+Sheets("DATA").Select
+
+Dim lastColumn As Long
+lastColumn = Sheets("DATA").Cells(2, Columns.Count).End(xlToLeft).Column
+
+
+
+Dim a As Long
+Dim b As Long
+    a = 0
+    b = lastColumn - 1
+        
+    Range("A2").Select
+    Range(Selection, Selection.End(xlDown)).Select
+    Selection.Copy
+    Sheets("GASOLINE").Select
+    Range("D1").Select
+    Selection.PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks _
+        :=False, Transpose:=False
+    Selection.End(xlDown).Select
+    ActiveCell.Offset(1, 0).Select
+
+
+Do Until a = b
+    a = a + 1
+    Sheets("DATA").Select
+    ActiveCell.Offset(0, 1).Select
+    Range(Selection, Selection.End(xlDown)).Select
+    Selection.Copy
+    Sheets("GASOLINE").Select
+    Selection.PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks _
+        :=False, Transpose:=False
+    Selection.End(xlDown).Select
+    ActiveCell.Offset(1, 0).Select
+      
+Loop
+
+End Sub
+
+Sub MD()
+'
+' MD DATA PREPARATION
+
+
+' from All tab to DATA tab and MD tab
+
+    'adding a row where we will include the filter
+    Sheets("All").Select
+    Range("C1").EntireRow.Insert
+    
+    'Find the LastRow
+    Dim LastLine As Long
+    LastLine = Columns(1).Find("*", , , , xlByColumns, xlPrevious).Row
+    
+    'Add filter or filters
+    Range("A:XFD").AutoFilter Field:=3, Criteria1:="DISTILLATES"
+    'Range("A:XFD").AutoFilter Field:=4, Criteria1:="<>LPA NARL REFINING"
+    
+    'Copy the filtered data and Paste to DATA
+    Range("H3:XFD" & LastLine).SpecialCells(xlCellTypeVisible).Copy
+    Sheets("DATA").Range("A2").PasteSpecial
+    
+    'Copy company code and Paste to MD
+    Sheets("All").Select
+    Range("B3:B" & LastLine).SpecialCells(xlCellTypeVisible).Copy
+    Sheets("MD").Range("A1").PasteSpecial
+    
+    'Copy Manual entry and Paste to MD
+    Sheets("All").Select
+    Range("A3:A" & LastLine).SpecialCells(xlCellTypeVisible).Copy
+    Sheets("MD").Range("C1").PasteSpecial Paste:=xlPasteValues
+       
+    
+    'Delete the first row as well as the filter
+    Sheets("All").Select
+    Range("A1").EntireRow.Delete
+
+
+
+' from DATA tab to MD tab
+
+Sheets("DATA").Select
+
+Dim lastColumn As Long
+lastColumn = Sheets("DATA").Cells(2, Columns.Count).End(xlToLeft).Column
+
+
+
+Dim a As Long
+Dim b As Long
+    a = 0
+    b = lastColumn - 1
+        
+    Range("A2").Select
+    Range(Selection, Selection.End(xlDown)).Select
+    Selection.Copy
+    Sheets("MD").Select
+    Range("D1").Select
+    Selection.PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks _
+        :=False, Transpose:=False
+    Selection.End(xlDown).Select
+    ActiveCell.Offset(1, 0).Select
+
+
+Do Until a = b
+    a = a + 1
+    Sheets("DATA").Select
+    ActiveCell.Offset(0, 1).Select
+    Range(Selection, Selection.End(xlDown)).Select
+    Selection.Copy
+    Sheets("MD").Select
+    Selection.PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks _
+        :=False, Transpose:=False
+    Selection.End(xlDown).Select
+    ActiveCell.Offset(1, 0).Select
+       
+Loop
+
+End Sub

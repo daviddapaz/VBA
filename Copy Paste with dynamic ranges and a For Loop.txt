@@ -1,0 +1,323 @@
+Public CalcState As Long
+Public EventState As Boolean
+Public PageBreakState As Boolean
+
+
+Sub OptimizeCode_Begin()
+
+Application.ScreenUpdating = False
+
+EventState = Application.EnableEvents
+Application.EnableEvents = False
+
+CalcState = Application.Calculation
+Application.Calculation = xlCalculationManual
+
+PageBreakState = ActiveSheet.DisplayPageBreaks
+ActiveSheet.DisplayPageBreaks = False
+
+End Sub
+
+Sub OptimizeCode_End()
+
+ActiveSheet.DisplayPageBreaks = PageBreakState
+Application.Calculation = CalcState
+Application.EnableEvents = EventState
+Application.ScreenUpdating = True
+
+End Sub
+
+
+
+
+
+Function CheckFileIsOpen(chkSumfile As String) As Boolean
+
+    On Error Resume Next
+    
+    CheckFileIsOpen = (Workbooks(chkSumfile).Name = chkSumfile)
+    
+    On Error GoTo 0
+    
+End Function
+
+
+
+Sub Copy_Paste()
+'
+
+Dim answer As Integer
+
+
+    
+    If CheckFileIsOpen("FlatAnalyticalWoNonexist.xlsm") = False Then
+    
+    answer = MsgBox("Are you sure you want to open FlatAnalyticalWoNonexist.xlsm?", vbYesNo, "Open File")
+
+    If answer = vbYes Then
+        Workbooks.Open (ThisWorkbook.Path & "\FlatAnalyticalWoNonexist.xlsm")
+    Else
+        Exit Sub
+    End If
+    End If
+    
+        
+    'Copy
+    Windows("FlatAnalyticalWoNonexist.xlsm").Activate
+    Sheets("3DeductionPivotForOthers").Activate
+    Range("A4:C4").Select
+    Range(Selection, Selection.End(xlDown)).Select
+    Selection.Copy
+    
+    'Paste
+    Windows("2OTHERCalculation.xlsm").Activate
+    Sheets("4CRUDEPivotCopy-Theor-ACTDATES").Activate
+    Range("A2").Select
+    Selection.PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks _
+        :=False, Transpose:=False
+    Range("D1").Select
+    
+    
+End Sub
+
+
+
+Sub MD_Actual_Data()
+'
+' MD_Actual_Data Macro
+'
+
+    If CheckFileIsOpen("1ALLBOOKWCActuals - ETRM.xlsm") = False Then
+    MsgBox ("Please open 1ALLBOOKWCActuals - ETRM.xlsm file before running the macro.")
+    Exit Sub
+    End If
+
+Dim xLastRow As Long
+    With Application.ActiveSheet
+        xLastRow = (.Cells(.Rows.Count, "C").End(xlUp).Row + 1)
+    End With
+    MsgBox xLastRow
+    
+
+    Windows("1ALLBOOKWCActuals - ETRM.xlsm").Activate
+    'add the worksheet
+    Sheets("MD").Activate
+    Range("B1:D1").Select
+    Range(Selection, Selection.End(xlDown)).Select
+    Selection.Copy
+    
+    Windows("2OTHERCalculation.xlsm").Activate
+    Sheets("4CRUDEPivotCopy-Theor-ACTDATES").Activate
+    Range("A" & Rows.Count).End(xlUp).Offset(1).Select
+    Selection.PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks _
+        :=False, Transpose:=False
+    
+    'Dividing by millions
+    Range("G1").Select
+    Selection.Copy
+    
+    
+    Range("C" & xLastRow).Select
+    Range(Selection, Selection.End(xlDown)).Select
+    Selection.PasteSpecial Paste:=xlPasteValues, Operation:=xlDivide, _
+        SkipBlanks:=False, Transpose:=False
+    MsgBox ("MD Actuals complete.")
+ 
+End Sub
+
+
+Sub CRUDE_Actual_Data()
+'
+' CRUDE_Actual_Data Macro
+'
+    If CheckFileIsOpen("1ALLBOOKWCActuals - ETRM.xlsm") = False Then
+    MsgBox ("Please open 1ALLBOOKWCActuals - ETRM.xlsm file before running the macro.")
+    Exit Sub
+    End If
+
+Dim xLastRow As Long
+    With Application.ActiveSheet
+        xLastRow = (.Cells(.Rows.Count, "C").End(xlUp).Row + 1)
+    End With
+    MsgBox xLastRow
+    
+
+    Windows("1ALLBOOKWCActuals - ETRM.xlsm").Activate
+    'add the worksheet
+    Sheets("CRUDE").Activate
+    Range("B1:D1").Select
+    Range(Selection, Selection.End(xlDown)).Select
+    Selection.Copy
+    
+    Windows("2OTHERCalculation.xlsm").Activate
+    Sheets("4CRUDEPivotCopy-Theor-ACTDATES").Activate
+    Range("A" & Rows.Count).End(xlUp).Offset(1).Select
+    Selection.PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks _
+        :=False, Transpose:=False
+    
+    'Dividing by millions
+    Range("G1").Select
+    Selection.Copy
+    
+    
+    Range("C" & xLastRow).Select
+    Range(Selection, Selection.End(xlDown)).Select
+    Selection.PasteSpecial Paste:=xlPasteValues, Operation:=xlDivide, _
+        SkipBlanks:=False, Transpose:=False
+  
+ 
+End Sub
+
+Sub HEAVY_Actual_Data()
+'
+' HEAVY_Actual_Data Macro
+'
+    If CheckFileIsOpen("1ALLBOOKWCActuals - ETRM.xlsm") = False Then
+    MsgBox ("Please open 1ALLBOOKWCActuals - ETRM.xlsm file before running the macro.")
+    Exit Sub
+    End If
+
+Dim xLastRow As Long
+    With Application.ActiveSheet
+        xLastRow = (.Cells(.Rows.Count, "C").End(xlUp).Row + 1)
+    End With
+    MsgBox xLastRow
+    
+
+    Windows("1ALLBOOKWCActuals - ETRM.xlsm").Activate
+    'add the worksheet
+    Sheets("HEAVY").Activate
+    Range("B1:D1").Select
+    Range(Selection, Selection.End(xlDown)).Select
+    Selection.Copy
+    
+    Windows("2OTHERCalculation.xlsm").Activate
+    Sheets("4CRUDEPivotCopy-Theor-ACTDATES").Activate
+    Range("A" & Rows.Count).End(xlUp).Offset(1).Select
+    Selection.PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks _
+        :=False, Transpose:=False
+    
+    'Dividing by millions
+    Range("G1").Select
+    Selection.Copy
+    
+    
+    Range("C" & xLastRow).Select
+    Range(Selection, Selection.End(xlDown)).Select
+    Selection.PasteSpecial Paste:=xlPasteValues, Operation:=xlDivide, _
+        SkipBlanks:=False, Transpose:=False
+  
+ 
+End Sub
+
+
+Sub LIGHT_Actual_Data()
+'
+' LIGHT_Actual_Data Macro
+'
+    If CheckFileIsOpen("1ALLBOOKWCActuals - ETRM.xlsm") = False Then
+    MsgBox ("Please open 1ALLBOOKWCActuals - ETRM.xlsm file before running the macro.")
+    Exit Sub
+    End If
+
+Dim xLastRow As Long
+    With Application.ActiveSheet
+        xLastRow = (.Cells(.Rows.Count, "C").End(xlUp).Row + 1)
+    End With
+    MsgBox xLastRow
+    
+
+    Windows("1ALLBOOKWCActuals - ETRM.xlsm").Activate
+    'add the worksheet
+    Sheets("LIGHT").Activate
+    Range("B1:D1").Select
+    Range(Selection, Selection.End(xlDown)).Select
+    Selection.Copy
+    
+    Windows("2OTHERCalculation.xlsm").Activate
+    Sheets("4CRUDEPivotCopy-Theor-ACTDATES").Activate
+    Range("A" & Rows.Count).End(xlUp).Offset(1).Select
+    Selection.PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks _
+        :=False, Transpose:=False
+    
+    'Dividing by millions
+    Range("G1").Select
+    Selection.Copy
+    
+    
+    Range("C" & xLastRow).Select
+    Range(Selection, Selection.End(xlDown)).Select
+    Selection.PasteSpecial Paste:=xlPasteValues, Operation:=xlDivide, _
+        SkipBlanks:=False, Transpose:=False
+  
+ 
+End Sub
+
+Sub Clean_Data()
+
+Range("A2:C2").Select
+    Range(Selection, Selection.End(xlDown)).Select
+    Selection.ClearContents
+    
+Range("A1").Select
+
+End Sub
+
+
+Sub Copy_Paste_results()
+
+Sheets("5PivotNetOthersWoZerosAndPeriod").Activate
+Range("A4:C4").Select
+Range(Selection, Selection.End(xlDown)).Select
+Selection.Copy
+
+Sheets("6NetOthers+RepeatLastActualDate").Activate
+Range("A2:C2").Select
+Selection.PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks _
+        :=False, Transpose:=False
+
+End Sub
+
+
+Sub repeat_last_actual_date()
+
+Call OptimizeCode_Begin
+
+Dim lrow As Long
+
+    On Error Resume Next
+    lrow = Application.WorksheetFunction.Match(Range("H1"), Range("A:A"), 0)
+    On Error GoTo 0
+    
+MsgBox ("row " & lrow & " is the last entry.")
+
+
+Dim xLastRow As Long
+    With Application.ActiveSheet
+        xLastRow = (.Cells(.Rows.Count, "A").End(xlUp).Row + 1)
+    End With
+    
+
+Dim i As Integer
+Dim n As Integer
+
+MsgBox (Range("H5") & " rows will be added.")
+    
+For i = 0 To Range("H5").Value Step 1
+
+       
+Range("A" & xLastRow + i).Select
+Range("A" & xLastRow + i).Formula = "=" & Cells(lrow + i, 1).Address(ReferenceStyle:=xlR1C1) & "+1"
+
+Range("B" & xLastRow + i).Select
+Range("B" & xLastRow + i).Formula = "=" & Cells(lrow + i, 2).Address(ReferenceStyle:=xlR1C1)
+
+Range("C" & xLastRow + i).Select
+Range("C" & xLastRow + i).Formula = "=" & Cells(lrow + i, 3).Address(ReferenceStyle:=xlR1C1)
+
+
+Next i
+
+Call OptimizeCode_End
+
+End Sub

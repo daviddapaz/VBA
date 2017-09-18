@@ -1,0 +1,149 @@
+
+Public CalcState As Long
+Public EventState As Boolean
+Public PageBreakState As Boolean
+
+Sub OptimizeCode_Begin()
+
+Application.ScreenUpdating = False
+
+EventState = Application.EnableEvents
+Application.EnableEvents = False
+
+CalcState = Application.Calculation
+Application.Calculation = xlCalculationManual
+
+PageBreakState = ActiveSheet.DisplayPageBreaks
+ActiveSheet.DisplayPageBreaks = False
+
+End Sub
+
+Sub OptimizeCode_End()
+
+ActiveSheet.DisplayPageBreaks = PageBreakState
+Application.Calculation = CalcState
+Application.EnableEvents = EventState
+Application.ScreenUpdating = True
+
+End Sub
+
+
+
+Sub Convert_Data()
+'
+' convert data
+'
+
+Call OptimizeCode_Begin
+
+Sheets.Add.Name = "Data_Tableau"
+
+    Sheets("Tableau").Select
+    Cells.Select
+    Selection.ClearContents
+    
+    Sheets("Data_Tableau").Select
+    Cells.Select
+    Selection.ClearContents
+    Sheets("Data").Select
+    Rows("1:1").Select
+    Selection.Copy
+    Sheets("Data_Tableau").Select
+    Rows("1:1").Select
+    ActiveSheet.Paste
+    
+''added by David to calculate how many rows we loop with variable k
+Dim sh As Worksheet
+Set sh = ThisWorkbook.Sheets("Data")
+Dim k As Long
+k = sh.Range("A1", sh.Range("A1").End(xlDown)).Rows.Count
+    
+Dim x As Long
+Dim y As Long
+Dim z As Long
+Dim w As Long
+
+Dim a As Long
+Dim b As Long
+
+x = 1
+z = 0
+w = 1
+
+Do Until x = k
+
+x = x + 1
+
+    Sheets("Data").Select
+    Rows(x).Select
+    Application.CutCopyMode = False
+    Selection.Copy
+    Sheets("Data_Tableau").Select
+    
+    y = 0
+    
+    Do Until y = Abs(Sheets("Data").Cells(x, 4).Value)
+    y = y + 1
+    w = w + 1
+    Rows(w).Select
+    Selection.PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks _
+        :=False, Transpose:=False
+    Cells(w, 2).Select
+    ActiveCell.FormulaR1C1 = "STOCK IN TRANSIT"
+    Cells(w, 1).Select
+    If Sheets("Data").Cells(x, 4).Value >= 0 Then
+    ActiveCell.FormulaR1C1 = Sheets("Data").Cells(x, 1).Value + Sheets("Data").Cells(x, 4).Value - y
+    Else
+    ActiveCell.FormulaR1C1 = Sheets("Data").Cells(x, 1).Value + Sheets("Data").Cells(x, 4).Value - 1 + y
+    End If
+    Loop
+    
+    
+    z = 0
+    
+    Do Until z = Abs(Sheets("Data").Cells(x, 5).Value)
+    z = z + 1
+    w = w + 1
+    Rows(w).Select
+    Selection.PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks _
+        :=False, Transpose:=False
+    Cells(w, 2).Select
+    ActiveCell.FormulaR1C1 = "PAYMENT TERMS"
+    Cells(w, 1).Select
+    If Sheets("Data").Cells(x, 5).Value >= 0 Then
+    ActiveCell.FormulaR1C1 = Sheets("Data").Cells(x, 1).Value + Sheets("Data").Cells(x, 5).Value + Sheets("Data").Cells(x, 4).Value - z
+    Else
+    ActiveCell.FormulaR1C1 = Sheets("Data").Cells(x, 1).Value + Sheets("Data").Cells(x, 5).Value + Sheets("Data").Cells(x, 4).Value - 1 + z
+    End If
+    Loop
+    
+Loop
+        
+
+        
+        
+   'filter and copy the results to tableau tab
+        
+    Sheets("Data_Tableau").Select
+    Range("A1").Select
+    Range(Selection, Selection.End(xlToRight)).Select
+    Selection.AutoFilter
+    ActiveSheet.Range("$A$1:$BE$150000").AutoFilter Field:=1, Operator:= _
+        xlFilterValues, Criteria2:=Array(0, "1/23/2020", 0, "12/31/2019", 0, "12/31/2018", _
+        0, "12/31/2017")
+    Cells.Select
+    Selection.Copy
+    Sheets("Tableau").Select
+    Cells.Select
+    Selection.PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks _
+        :=False, Transpose:=False
+    Range("A1").Select
+                    
+Sheets("Data_Tableau").Delete
+                    
+MsgBox ("Completed!")
+                    
+Call OptimizeCode_End
+    
+        
+End Sub
